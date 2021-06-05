@@ -1,0 +1,7 @@
+https://github.com/kokke/tiny-AES-c
+Is where i get the crypt/decrypt functions
+This is where I have the problem.
+Remember that fixes should not modify the crypt / decrypt behavior
+Using Visual Studio 2019
+
+
