@@ -1,13 +1,23 @@
 #pragma once
+
+
 #include <string>
 #include <iostream>
 using namespace std;
-
+#include <comutil.h>
 
 #define CRYPT_EXPORTS __declspec(dllexport)
 
-extern "C" CRYPT_EXPORTS int DisplayHelloFromDLL(int a,int b);
+struct Crypt
+{
+	char* inputStr;
+	char* outStr;
+	int dataSize;
+};
 
-extern "C" CRYPT_EXPORTS char* CryptData(char* data);
+extern "C" CRYPT_EXPORTS BSTR CryptData(char* data);
 
-extern "C" CRYPT_EXPORTS char* DecryptData(char*, int);
+extern "C" CRYPT_EXPORTS BSTR DecryptData(char*, int);
+
+BSTR ANSItoBSTR(const char* input);
+

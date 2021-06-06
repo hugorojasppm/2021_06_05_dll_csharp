@@ -1,0 +1,13 @@
+﻿  pch.cpp
+  aes.cpp
+  dllmain.cpp
+  hello.cpp
+e:\projects\fixed\linux-windows-csharp\Hello\Hello\hello.cpp(108,26): warning C4018: '<': signed/unsigned mismatch
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1363,5): warning MSB8012: TargetPath(E:\projects\fixed\linux-windows-csharp\Hello\Win32\Release\Hello.dll) does not match the Linker's OutputFile property value (E:\projects\fixed\linux-windows-csharp\Hello\Win32\Release\Crypt.dll). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1365,5): warning MSB8012: TargetName(Hello) does not match the Linker's OutputFile property value (Crypt). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+     Creating library E:\projects\fixed\linux-windows-csharp\Hello\Win32\Release\Hello.lib and object E:\projects\fixed\linux-windows-csharp\Hello\Win32\Release\Hello.exp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 16 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Hello.vcxproj -> E:\projects\fixed\linux-windows-csharp\Hello\Win32\Release\Hello.dll

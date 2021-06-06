@@ -1,6 +1,6 @@
 #include "pch.h"
-#include <utility>
 #include "hello.h"
+#include <utility>
 #include "aes.h"
 #include <iostream>
 
@@ -29,6 +29,8 @@ char* base64_encode(const char* data, size_t input_length, size_t* output_length
     *output_length = 4 * ((input_length + 2) / 3);
 
     char* encoded_data = (char*)malloc(*output_length+1);
+    //char* encoded_data = (char*)LocalAlloc(LMEM_FIXED, *output_length + 1);
+    if (!encoded_data) return NULL;
 
     if (encoded_data == NULL)
         return NULL;
@@ -68,7 +70,8 @@ char* base64_decode(const char* data, size_t input_length, size_t* output_length
     if (data[input_length - 2] == '=') (*output_length)--;
 
     char* decoded_data = (char*)malloc(*output_length+1);
-    if (decoded_data == NULL) return NULL;
+    //char* decoded_data = (char*)LocalAlloc(LMEM_FIXED, *output_length + 1);
+    if (!decoded_data) return NULL;
 
     for (size_t i = 0, j = 0; i < input_length;) {
 
@@ -90,40 +93,75 @@ char* base64_decode(const char* data, size_t input_length, size_t* output_length
     return decoded_data;
 }
 
-char* DecryptData(char* encoded_data, int data_size) {
+BSTR DecryptData(char* encoded_data, int data_size) {
     uint8_t key[] = "RgPS6ry9nMPnd4lULxUMak2fI2tponjX";
     uint8_t iv[] = "OiWLtq9QzQHxcwKQ0XsRXS88tGlFGGsC";
     struct AES_ctx ctx;
 
     size_t decode_size = strlen(encoded_data);
     char* decoded_data = base64_decode(encoded_data, decode_size, &decode_size);
-    uint8_t* newStr = new uint8_t[data_size]; 
-    memcpy(newStr, decoded_data, data_size + 1);
+
+    uint8_t* newStr = new uint8_t[data_size+1]; 
+    //uint8_t* newStr = (uint8_t*)LocalAlloc(LMEM_FIXED, data_size);
+
+    //memcpy(newStr, decoded_data, data_size + 1);
+    for (size_t i = 0; i < data_size; i++)
+    {
+        newStr[i] = (uint8_t)decoded_data[i];
+    }
+    newStr[data_size] = '\0';
 
     AES_init_ctx_iv(&ctx, key, iv);
     AES_CTR_xcrypt_buffer(&ctx, newStr, data_size);
 
     char* result = (char*)newStr;
-    //printf("\nResultado del decode: %s\n", result);
-    return result;
+    return ANSItoBSTR(result);
 }
 
-char* CryptData(char* data) {
+BSTR CryptData(char* data) {
     uint8_t key[] = "RgPS6ry9nMPnd4lULxUMak2fI2tponjX";
     uint8_t iv[] = "OiWLtq9QzQHxcwKQ0XsRXS88tGlFGGsC";
-    uint8_t* str = new uint8_t[strlen(data)];
-    memcpy(str, data, strlen(data) + 1);
+    uint8_t* str =  new uint8_t[strlen(data)];
+    
+    //memcpy(str, data, strlen(data) + 1);
 
     size_t data_size = strlen(data);
+    for (size_t i = 0; i < data_size; i++)
+    {
+        str[i] = (uint8_t)data[i];
+    }
+
+    
     struct AES_ctx ctx;
     AES_init_ctx_iv(&ctx, key, iv);
     AES_CTR_xcrypt_buffer(&ctx, str, data_size);
+
+
     const char* plainText = (char*)str;
     size_t input_size = strlen(data);
-    char* encoded_data = base64_encode(plainText, input_size, &input_size);
-    //printf("Encoded Data is: %s \n", encoded_data);
 
-    char a = -3;
-    //printf("................%d..%d...........", input_size, strlen(encoded_data));
-    return encoded_data;
+    char* encoded_data = base64_encode(plainText, input_size, &input_size);
+    delete[] str;
+    //char * encoded_data = (char*)"AAAAAAAAAAAAAAAAAAAAAA";
+    BSTR bstr = ANSItoBSTR(encoded_data);
+
+    delete[] encoded_data;
+
+    return bstr;
+
+    //char* fff = (char*)"Greetings from the native world!";
+    //return ANSItoBSTR(fff);
+
+}
+BSTR ANSItoBSTR(const char* input)
+{
+    BSTR result = NULL;
+    int lenA = lstrlenA(input);
+    int lenW = ::MultiByteToWideChar(CP_ACP, 0, input, lenA, NULL, 0);
+    if (lenW > 0)
+    {
+        result = ::SysAllocStringLen(0, lenW);
+        ::MultiByteToWideChar(CP_ACP, 0, input, lenA, result, lenW);
+    }
+    return result;
 }
